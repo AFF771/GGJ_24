@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject wallKillLocation;
     [SerializeField] GameObject[] wallMeshes;
     [SerializeField] float wallSpeed;
+    [SerializeField] float wallSpeedCap;
     [SerializeField] float wallSpeedStep;
 
     Queue<GameObject> wallQueue = new Queue<GameObject>();
@@ -45,7 +46,6 @@ public class GameManager : MonoBehaviour
 
         if (wallQueue != null)
         {
-            Debug.Log(wallQueue.Count);
             
             foreach (GameObject wall in wallQueue)
             {
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     // Spawn new wall
     void SpawnWall()
     {   
-        int wallIndex = Random.Range(0, wallMeshes.Length - 1);
+        int wallIndex = Random.Range(0, wallMeshes.Length);
         //print("spawn wall:" + wallIndex);
 
         GameObject newWall = Instantiate(wallMeshes[wallIndex], wallSpawnLocation.transform.position, Quaternion.identity);

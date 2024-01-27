@@ -1,21 +1,128 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerMouseMove : MonoBehaviour
 {
     Vector3 mOffset;
 
     float mZCoord;
-    float mYCoord;
 
-    private void OnMouseDown()
+    [SerializeField] float rotationSpeed = 5f;
+    [SerializeField] bool controllable;
+
+    [SerializeField] GameObject LeftArmTaget;
+    [SerializeField] GameObject RightArmTaget;
+    [SerializeField] GameObject LeftLegTarget;
+    [SerializeField] GameObject RightLegTarget;
+
+    [SerializeField] GameObject Main;
+    RigBuilder myRig;
+
+    [SerializeField] GameObject[] tooltips;
+
+    Rigidbody myRb;
+
+    Vector3 worldOffset;
+
+    private void Start()
     {
+        myRb = GetComponent<Rigidbody>();
+        controllable = true;
+        myRig = Main.GetComponent<RigBuilder>();
+    }
+
+    private void Update()
+    {
+        if (!controllable) return;
+
         mZCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
 
-        mYCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).y;
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            transform.Rotate(Vector3.forward, rotationSpeed * Time.deltaTime);
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            transform.Rotate(Vector3.forward, -rotationSpeed * Time.deltaTime);
+        }
 
-        mOffset = gameObject.transform.position - GetMouseWorldPos();
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                worldOffset = transform.position - GetMouseWorldPos();
+                ShowTooltips();
+            }
+
+            transform.position = GetMouseWorldPos() + worldOffset;
+        }
+        else if (Input.GetKey(KeyCode.W))
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                worldOffset = LeftArmTaget.transform.position - GetMouseWorldPos();
+                ShowTooltips();
+            }
+
+            myRig.enabled = true;
+            LeftArmTaget.transform.position = GetMouseWorldPos() + worldOffset;
+        }
+        else if (Input.GetKey(KeyCode.Q))
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                worldOffset = RightArmTaget.transform.position - GetMouseWorldPos();
+                ShowTooltips();
+            }
+            myRig.enabled = true;
+            RightArmTaget.transform.position = GetMouseWorldPos() + worldOffset;
+        }
+        else if(Input.GetKey(KeyCode.S))
+        {
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                worldOffset = LeftLegTarget.transform.position - GetMouseWorldPos();
+                ShowTooltips();
+            }
+            myRig.enabled = true;
+            LeftLegTarget.transform.position = GetMouseWorldPos() + worldOffset;
+        }
+        else if(Input.GetKey(KeyCode.A))
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                worldOffset = RightLegTarget.transform.position - GetMouseWorldPos();
+                ShowTooltips();
+            }
+            myRig.enabled = true;
+            RightLegTarget.transform.position = GetMouseWorldPos() + worldOffset;
+        }
+        else
+        {
+            FadeOutTooltips();
+        }
+
+    }
+
+    private void FadeOutTooltips()
+    {
+        for(int i = 0; i < tooltips.Length; i++)
+        {
+            Tooltip tooltipScript = tooltips[i].GetComponent<Tooltip>();
+            tooltipScript.FadeOut();
+        }
+    }
+
+    private void ShowTooltips()
+    {
+        for (int i = 0; i < tooltips.Length; i++)
+        {
+            Tooltip tooltipScript = tooltips[i].GetComponent<Tooltip>();
+            tooltipScript.ShowTooltip();
+        }
     }
 
     private Vector3 GetMouseWorldPos()
@@ -23,15 +130,22 @@ public class PlayerMouseMove : MonoBehaviour
         Vector3 mousePoint = Input.mousePosition;
 
         mousePoint.z = mZCoord;
-        mousePoint.y = mYCoord;
 
         return Camera.main.ScreenToWorldPoint(mousePoint);
     }
 
-    private void OnMouseDrag()
+    private void OnTriggerEnter(Collider other)
     {
-        //if (Input.GetKey() || Input.anyKey != Input.GetMouseButton(0)) return;
-        Debug.Log("123");
-        transform.position = GetMouseWorldPos() + mOffset;
+        if (!other.gameObject.CompareTag("Wall")) return;
+
+        myRb.isKinematic = false;
+        myRig.enabled = false;
+        myRb.constraints = RigidbodyConstraints.None;
+        controllable = false;
+    }
+
+    public void RigUnable()
+    {
+        myRig.enabled = false;
     }
 }
