@@ -11,7 +11,7 @@ public class Shooter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("Shoot", Random.Range(0f, 15f), Random.Range(0f, 15f));
+        InvokeRepeating("Shoot", Random.Range(0f, 5f), Random.Range(0f, 150f));
     }
 
     void Shoot()

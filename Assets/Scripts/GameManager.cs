@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] AudioSource[] audioSources;
+    
     [SerializeField] TextMeshProUGUI scoreText;
 
     [SerializeField] Canvas restartScreen;
@@ -133,6 +135,8 @@ public class GameManager : MonoBehaviour
     // called when player colides whith wall
     public void TriggerKillCam(GameObject playerGameObj)
     {
+        audioSources[0].Play();
+
         // kill cam (follow player)
         cameraHandlerRef.KillCam(playerGameObj, killCamDuration);
 

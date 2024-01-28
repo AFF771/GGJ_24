@@ -912,10 +912,22 @@ MonoBehaviour:
   - {fileID: 2100000, guid: d216fafff1bbc4b4aaedb6ae79539fd7, type: 2}
   - {fileID: 2100000, guid: 05502f594833ecd4a87ee3753ef4fb07, type: 2}
   - {fileID: 2100000, guid: 51fe70b8c02bf5d428d6c82797cdaf9f, type: 2}
+  - {fileID: 2100000, guid: d2291ec0592996d4da485d7602891bcb, type: 2}
+  - {fileID: 2100000, guid: e1149982e21ab824a90935a2c6239090, type: 2}
+  - {fileID: 2100000, guid: 0d773a7a7325cad45b031587383f1b9f, type: 2}
+  - {fileID: 2100000, guid: 0f56fcdaa8c356b448cc03bc72ead23b, type: 2}
+  - {fileID: 2100000, guid: 918d05de7f9ba844c89c759e9f99ee7c, type: 2}
+  - {fileID: 2100000, guid: dc2229603d360be44b4c98f9d0bfc468, type: 2}
   gearMaterials:
   - {fileID: 2100000, guid: 4613dee9868d0094eaa93b0b9d01564d, type: 2}
   - {fileID: 2100000, guid: f0eb4a3191b30b84b9957e12ee019cec, type: 2}
   - {fileID: 2100000, guid: ed9551c4f8498324e8709dbfadf381c0, type: 2}
+  - {fileID: 2100000, guid: a56a57c219c8adc42addcefa4872f3c7, type: 2}
+  - {fileID: 2100000, guid: eaca97111f222eb4eb5f9efd5e15d4b0, type: 2}
+  - {fileID: 2100000, guid: 15b65257f74e92d4daecbd9ecececbab, type: 2}
+  - {fileID: 2100000, guid: 0a0754cf3c78c1a458bded743d431ce5, type: 2}
+  - {fileID: 2100000, guid: 76a3dfaf82c8c4649a324e3a9949f13b, type: 2}
+  - {fileID: 2100000, guid: 8017670a28c790f4ba2cd7d46d38f974, type: 2}
   faceMaterials:
   - {fileID: 2100000, guid: 60fa2d9ce3cf9764d86ad49649f82888, type: 2}
   - {fileID: 2100000, guid: 753a8a37e6a152a40bcbb00d451fd6c6, type: 2}
