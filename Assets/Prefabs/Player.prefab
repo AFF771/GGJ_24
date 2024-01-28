@@ -1856,7 +1856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xLimit: 2
   yLimitUp: 2
-  yLimitDown: 0
+  yLimitDown: 0.2
   rotationSpeed: 5000
   controllable: 1
   LeftArmTaget: {fileID: 6344421118319445828}
@@ -1927,7 +1927,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2825761808860605167}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
   m_Name: 

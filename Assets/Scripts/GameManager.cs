@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         cameraHandlerRef = camera_h.GetComponent<CameraHandler>();    
 
-        player = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+        player = Instantiate(playerPrefab, playerPosition, Quaternion.Euler(playerRotation));
 
         StartCoroutine(WaitandExecute(3));
     }
@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
         SpawnWall();
         movementScript = player.GetComponentInChildren<PlayerMouseMove>();
         movementScript.EnableInput(gameObject);
+        Debug.Log("ENABLE INPUT");
     }
 
     // Update is called once per frame
@@ -114,16 +115,16 @@ public class GameManager : MonoBehaviour
 
         GameObject newWall = Instantiate(wallMeshes[wallIndex], wallSpawnLocation.transform.position, Quaternion.identity);
         Wall wallScript = newWall.AddComponent<Wall>();
-        wallScript.SetVariables(wallSpeed);
+        wallScript.SetVariables(wallSpeed, wallSpeedCap, camera_h);
 
         wallQueue.Enqueue(newWall);
     }
 
     // called when player colides whith wall
-    public void TriggerKillCam()
+    public void TriggerKillCam(GameObject playerGameObj)
     {
         // kill cam (follow player)
-        cameraHandlerRef.KillCam(this.gameObject, killCamDuration);
+        cameraHandlerRef.KillCam(playerGameObj, killCamDuration);
 
         StartCoroutine(WaitForNewRound());
     }
@@ -142,6 +143,7 @@ public class GameManager : MonoBehaviour
         // spawn new player
         player = Instantiate(playerPrefab, playerPosition, Quaternion.Euler(playerRotation));
         movementScript = player.GetComponentInChildren<PlayerMouseMove>();
+        movementScript.EnableInput(gameObject);
 
         Debug.Log("New Round");
 

@@ -44,8 +44,6 @@ public class CameraHandler : MonoBehaviour
 
         if (followPlayer && player)
         {
-            Debug.Log("looking at player");
-
             gameObject.transform.LookAt(player.transform.position);
         }
 

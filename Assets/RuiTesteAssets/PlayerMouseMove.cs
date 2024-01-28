@@ -188,7 +188,7 @@ public class PlayerMouseMove : MonoBehaviour
     {
         for (int i = 0; i < tooltips.Length; i++)
         {
-            Destroy(tooltips[i]);
+            tooltips[i].SetActive(false);
         }
     }
 
@@ -196,6 +196,7 @@ public class PlayerMouseMove : MonoBehaviour
     {
         for(int i = 0; i < tooltips.Length; i++)
         {
+            tooltips[i].SetActive(true);
             Tooltip tooltipScript = tooltips[i].GetComponent<Tooltip>();
             tooltipScript.FadeOut();
         }
@@ -205,6 +206,7 @@ public class PlayerMouseMove : MonoBehaviour
     {
         for (int i = 0; i < tooltips.Length; i++)
         {
+            tooltips[i].SetActive(true);
             Tooltip tooltipScript = tooltips[i].GetComponent<Tooltip>();
             tooltipScript.ShowTooltip();
         }
@@ -233,7 +235,7 @@ public class PlayerMouseMove : MonoBehaviour
             currentPlayer = false;
 
             // call kill camera/ trigger next round
-            gameManagerRef.TriggerKillCam();
+            gameManagerRef.TriggerKillCam(this.gameObject);
         }
     }
 
