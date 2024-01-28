@@ -52,7 +52,7 @@ public class Tooltip : MonoBehaviour
             {
                 spriteRenderer.material.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 interruptLerp = false;
-                elapsedTime = fadeOutTime;
+                elapsedTime = fadeOutTime + 1;
 
                 yield return null;
             }

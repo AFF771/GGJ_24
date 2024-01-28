@@ -7,7 +7,16 @@ using UnityEngine.Events;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI scoreText;
-    
+
+    [SerializeField] GameObject camera_h;
+
+    [SerializeField] float killCamDuration;
+
+    [SerializeField] GameObject playerPrefab;
+    [SerializeField] Vector3 playerPosition;
+    [SerializeField] Vector3 playerRotation;
+
+    [Header("Walls")]
     [SerializeField] float spawnFirst = 5;
     [SerializeField] GameObject wallSpawnLocation;
     [SerializeField] GameObject wallKillLocation;
@@ -15,26 +24,45 @@ public class GameManager : MonoBehaviour
     [SerializeField] float wallSpeed;
     [SerializeField] float wallSpeedCap;
     [SerializeField] float wallSpeedStep;
+    [SerializeField] GameObject[] curtains;
+
+    GameObject player;
+    PlayerMouseMove movementScript;
+
+    Animator leftCurtainAnim;
+    Animator rightCurtainAnim;
 
     Queue<GameObject> wallQueue = new Queue<GameObject>();
 
-    float timer = 0;
+    private CameraHandler cameraHandlerRef;
 
-    bool spawnNewWall_b = false;
+    private float timer = 0;
 
-    int gameScore = 0;
+    private bool spawnNewWall_b = false;
+
+    private int gameScore = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(WaitandExecute(2));
+        leftCurtainAnim = curtains[0].GetComponent<Animator>();
+        rightCurtainAnim = curtains[1].GetComponent<Animator>();
+
+        cameraHandlerRef = camera_h.GetComponent<CameraHandler>();    
+
+        player = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
+
+        StartCoroutine(WaitandExecute(3));
     }
 
+    // wait for initial camera animation
     IEnumerator WaitandExecute(int seconds)
     {
         yield return new WaitForSeconds(seconds);
 
         SpawnWall();
+        movementScript = player.GetComponentInChildren<PlayerMouseMove>();
+        movementScript.EnableInput(gameObject);
     }
 
     // Update is called once per frame
@@ -77,8 +105,11 @@ public class GameManager : MonoBehaviour
 
     // Spawn new wall
     void SpawnWall()
-    {   
-        int wallIndex = Random.Range(0, wallMeshes.Length);
+    {
+        leftCurtainAnim.SetTrigger("trigger");
+        rightCurtainAnim.SetTrigger("trigger");
+
+        int wallIndex = Random.Range(0, wallMeshes.Length - 1);
         //print("spawn wall:" + wallIndex);
 
         GameObject newWall = Instantiate(wallMeshes[wallIndex], wallSpawnLocation.transform.position, Quaternion.identity);
@@ -86,5 +117,34 @@ public class GameManager : MonoBehaviour
         wallScript.SetVariables(wallSpeed);
 
         wallQueue.Enqueue(newWall);
+    }
+
+    // called when player colides whith wall
+    public void TriggerKillCam()
+    {
+        // kill cam (follow player)
+        cameraHandlerRef.KillCam(this.gameObject, killCamDuration);
+
+        StartCoroutine(WaitForNewRound());
+    }
+
+    IEnumerator WaitForNewRound()
+    {
+        yield return new WaitForSeconds(killCamDuration);
+
+        NewRound();
+    }
+
+    void NewRound()
+    {
+        // do changes to dumy before losing reference
+        
+        // spawn new player
+        player = Instantiate(playerPrefab, playerPosition, Quaternion.Euler(playerRotation));
+        movementScript = player.GetComponentInChildren<PlayerMouseMove>();
+
+        Debug.Log("New Round");
+
+        // change back camera
     }
 }

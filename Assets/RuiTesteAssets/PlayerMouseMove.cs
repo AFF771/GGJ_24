@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -10,8 +11,12 @@ public class PlayerMouseMove : MonoBehaviour
 
     float mZCoord;
 
+    [SerializeField] float xLimit = 2.0f;
+    [SerializeField] float yLimitUp = 1.5f;
+    [SerializeField] float yLimitDown = 0.0f;
+
     [SerializeField] float rotationSpeed = 5f;
-    [SerializeField] bool controllable;
+    [SerializeField] bool controllable = false;
 
     [SerializeField] GameObject LeftArmTaget;
     [SerializeField] GameObject RightArmTaget;
@@ -27,16 +32,32 @@ public class PlayerMouseMove : MonoBehaviour
 
     Vector3 worldOffset;
 
+    private GameManager gameManagerRef;
+
+    private bool currentPlayer = false;
+
     private void Start()
     {
         myRb = GetComponent<Rigidbody>();
-        controllable = true;
         myRig = Main.GetComponent<RigBuilder>();
+    }
+
+    // this becomes current player
+    public void EnableInput(GameObject manager)
+    {
+        currentPlayer = true;
+        controllable = true;
+        gameManagerRef = manager.GetComponent<GameManager>();
     }
 
     private void Update()
     {
-        if (!controllable) return;
+        if (!controllable || !currentPlayer)
+        {
+            HideTooltips();
+
+            return;
+        }
 
         mZCoord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
 
@@ -57,7 +78,17 @@ public class PlayerMouseMove : MonoBehaviour
                 ShowTooltips();
             }
 
-            transform.position = GetMouseWorldPos() + worldOffset;
+            Vector3 targetPosition = GetMouseWorldPos() + worldOffset;
+
+            // check position in bounds
+            if ( CheckPositionInBounds(targetPosition) )
+            {
+                transform.position = targetPosition;
+            }
+            else
+            {
+                worldOffset = Vector3.zero;
+            }
         }
         else if (Input.GetKey(KeyCode.W))
         {
@@ -67,8 +98,18 @@ public class PlayerMouseMove : MonoBehaviour
                 ShowTooltips();
             }
 
+            Vector3 targetPosition = GetMouseWorldPos() + worldOffset;
+
             myRig.enabled = true;
-            LeftArmTaget.transform.position = GetMouseWorldPos() + worldOffset;
+            // check position in bounds
+            if (CheckPositionInBounds(targetPosition))
+            {
+                LeftArmTaget.transform.position = targetPosition;
+            }
+            else
+            {
+                worldOffset = Vector3.zero;
+            }
         }
         else if (Input.GetKey(KeyCode.Q))
         {
@@ -77,8 +118,18 @@ public class PlayerMouseMove : MonoBehaviour
                 worldOffset = RightArmTaget.transform.position - GetMouseWorldPos();
                 ShowTooltips();
             }
+
+            Vector3 targetPosition = GetMouseWorldPos() + worldOffset;
+
             myRig.enabled = true;
-            RightArmTaget.transform.position = GetMouseWorldPos() + worldOffset;
+            if (CheckPositionInBounds(targetPosition))
+            {
+                RightArmTaget.transform.position = targetPosition;
+            }
+            else
+            {
+                worldOffset = Vector3.zero;
+            }
         }
         else if(Input.GetKey(KeyCode.S))
         {
@@ -87,8 +138,18 @@ public class PlayerMouseMove : MonoBehaviour
                 worldOffset = LeftLegTarget.transform.position - GetMouseWorldPos();
                 ShowTooltips();
             }
+
+            Vector3 targetPosition = GetMouseWorldPos() + worldOffset;
+
             myRig.enabled = true;
-            LeftLegTarget.transform.position = GetMouseWorldPos() + worldOffset;
+            if (CheckPositionInBounds(targetPosition))
+            {
+                LeftLegTarget.transform.position = targetPosition;
+            }
+            else
+            {
+                worldOffset = Vector3.zero;
+            }
         }
         else if(Input.GetKey(KeyCode.A))
         {
@@ -97,14 +158,38 @@ public class PlayerMouseMove : MonoBehaviour
                 worldOffset = RightLegTarget.transform.position - GetMouseWorldPos();
                 ShowTooltips();
             }
+
+            Vector3 targetPosition = GetMouseWorldPos() + worldOffset;
+
             myRig.enabled = true;
-            RightLegTarget.transform.position = GetMouseWorldPos() + worldOffset;
+            if (CheckPositionInBounds(targetPosition))
+            {
+                RightLegTarget.transform.position = targetPosition;
+            }
+            else
+            {
+                worldOffset = Vector3.zero;
+            }
         }
         else
         {
             FadeOutTooltips();
+            worldOffset = Vector3.zero; ;
         }
 
+    }
+
+    private bool CheckPositionInBounds(Vector3 position)
+    {
+        return (position.x > -xLimit) && (position.x < xLimit) && (position.y > yLimitDown) && (position.y < yLimitUp);
+    }
+
+    private void HideTooltips()
+    {
+        for (int i = 0; i < tooltips.Length; i++)
+        {
+            Destroy(tooltips[i]);
+        }
     }
 
     private void FadeOutTooltips()
@@ -134,17 +219,25 @@ public class PlayerMouseMove : MonoBehaviour
         return Camera.main.ScreenToWorldPoint(mousePoint);
     }
 
+    // called when trigger collides with wall
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.gameObject.CompareTag("Wall")) return;
+        if (other.gameObject.CompareTag("Wall") && currentPlayer)
+        {
+            Debug.Log("Hit wall");
 
-        myRb.isKinematic = false;
-        myRig.enabled = false;
-        myRb.constraints = RigidbodyConstraints.None;
-        controllable = false;
+            controllable = false;
+            myRb.isKinematic = false;
+            myRig.enabled = false;
+            myRb.constraints = RigidbodyConstraints.None;
+            currentPlayer = false;
+
+            // call kill camera/ trigger next round
+            gameManagerRef.TriggerKillCam();
+        }
     }
 
-    public void RigUnable()
+    public void RigDisable()
     {
         myRig.enabled = false;
     }

@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("update player controller");
+
         if (lost) return;
 
         Vector3 horizontalMov = new Vector3 (Input.GetAxis("Horizontal"), 0,0);
@@ -55,7 +57,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("chao");
+            Debug.Log("ground hit");
             ground = true;
         }
     }
