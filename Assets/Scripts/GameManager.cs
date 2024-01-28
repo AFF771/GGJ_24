@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI scoreText;
 
+    [SerializeField] Canvas restartScreen;
+
     [SerializeField] GameObject camera_h;
 
     [SerializeField] float killCamDuration;
@@ -41,6 +43,14 @@ public class GameManager : MonoBehaviour
     private bool spawnNewWall_b = false;
 
     private int gameScore = 0;
+
+    private float startWallSpeed;
+
+    private void Awake()
+    {
+        restartScreen.enabled = false;
+        startWallSpeed = wallSpeed;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -133,11 +143,21 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(killCamDuration);
 
-        NewRound();
+        // RETRY SCREEN
+        restartScreen.enabled = true;
+        Time.timeScale = 0;
     }
 
-    void NewRound()
+    public void NewRound()
     {
+        if (!restartScreen.enabled) return;
+        
+        restartScreen.enabled = false;
+        Time.timeScale = 1;
+
+        wallSpeed = startWallSpeed;
+        gameScore = 0;
+        
         // do changes to dumy before losing reference
         
         // spawn new player

@@ -1855,7 +1855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xLimit: 2
-  yLimitUp: 2
+  yLimitUp: 3
   yLimitDown: 0.2
   rotationSpeed: 5000
   controllable: 1
